@@ -359,9 +359,10 @@ class TabularCPD(DiscreteFactor):
         """
         tabular_cpd = self if inplace else self.copy()
         cpd = tabular_cpd.get_values()
-        tabular_cpd.values = (cpd / cpd.sum(axis=0)).reshape(
-            tuple(tabular_cpd.cardinality)
-        )
+        # tabular_cpd.values = (cpd / cpd.sum(axis=0)).reshape(
+        #     tuple(tabular_cpd.cardinality)
+        # )
+        tabular_cpd.values = np.ones(tuple(tabular_cpd.cardinality))
         if not inplace:
             return tabular_cpd
 

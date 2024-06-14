@@ -90,7 +90,7 @@ class NETWriter(object):
         network += network_template.substitute()
         variables = self.variables
 
-        for var in sorted(variables):
+        for var in variables:
             quoted_states = ['"' + state + '"' for state in self.variable_states[var]]
             states = "  ".join(quoted_states)
 
@@ -102,19 +102,24 @@ class NETWriter(object):
                     properties += property_template.substitute(prop=prop_val)
 
             network += node_template.substitute(
-                name=var, states=states, properties=properties
+                name=str(var).replace("-","_").replace("=","_").replace(",","_").replace(" ","_").replace("(","_").replace(")","_").replace("'","_").replace("[","_").replace("]","_")+str(id(var)
+                ), states=states, properties=properties
             )
 
-        for var in sorted(variables):
+        for var in variables:
             if not self.variable_parents[var]:
                 parents = ""
                 separator = " |"
             else:
-                parents = " ".join(self.variable_parents[var])
+                # parents = " ".join(self.variable_parents[var])
+                parents_list = list(self.variable_parents[var])                
+                parents = str(parents_list[0]).replace("-","_").replace("=","_").replace(",","_").replace(" ","_").replace("(","_").replace(")","_").replace("'","_").replace("[","_").replace("]","_")+str(id(parents_list[0]))
+                for parent in parents_list[1:]:
+                    parents += " " + str(parent).replace("-","_").replace("=","_").replace(",","_").replace(" ","_").replace("(","_").replace(")","_").replace("'","_").replace("[","_").replace("]","_")+str(id(parent))
                 separator = " | "
             potentials = self.net_cpd(var)
             network += potential_template.substitute(
-                variable_=var,
+                variable_=str(var).replace("-","_").replace("=","_").replace(",","_").replace(" ","_").replace("(","_").replace(")","_").replace("'","_").replace("[","_").replace("]","_")+str(id(var)),
                 separator_=separator,
                 parents=parents,
                 values=potentials,
@@ -134,7 +139,7 @@ class NETWriter(object):
         string: CPT format of .net files
         """
         cpt = self.tables[var_name]
-        cpt_array = np.moveaxis(compat_fns.to_numpy(cpt, decimals=4), 0, -1)
+        cpt_array = np.moveaxis(compat_fns.to_numpy(cpt), 0, -1)
         cpt_string = str(cpt_array)
         net_cpt_string = (
             cpt_string.replace("[", "(")
@@ -225,7 +230,7 @@ class NETWriter(object):
         """
         variables = self.model.nodes()
         property_tag = {}
-        for variable in sorted(variables):
+        for variable in variables:
             properties = self.model.nodes[variable]
             properties = collections.OrderedDict(sorted(properties.items()))
             property_tag[variable] = []

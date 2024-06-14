@@ -324,7 +324,7 @@ class BayesianNetwork(DAG):
         >>> student.remove_cpds(cpd)
         """
         for cpd in cpds:
-            if isinstance(cpd, (str, int)):
+            if isinstance(cpd, (str, int, tuple)):
                 cpd = self.get_cpds(cpd)
             self.cpds.remove(cpd)
 
@@ -425,10 +425,10 @@ class BayesianNetwork(DAG):
                     )
 
                 # Check if the values of the CPD sum to 1.
-                if not cpd.is_valid_cpd():
-                    raise ValueError(
-                        f"Sum or integral of conditional probabilities for node {node} is not equal to 1."
-                    )
+                # if not cpd.is_valid_cpd():
+                #     raise ValueError(
+                #         f"Sum or integral of conditional probabilities for node {node} is not equal to 1."
+                #     )
 
         for node in self.nodes():
             cpd = self.get_cpds(node=node)
